@@ -16,15 +16,17 @@ router.post("/register", async (req, res) => {
     const newUser = new User({ name, email, password, isAdmin });
     try {
         const user = await User.findOne({ email: email });
-        if (!user) res.status(404).send({ message: 'User Already Exists' });
+        if (user) res.status(404).send({ message: 'User Already Exists' });
+        else {
+            try {
+                newUser.save()
+                res.send('User Registered successfully')
+            } catch (error) {
+                return res.status(400).json({ message: error });
+            }
+        }
     } catch (error) {
         res.status(500).send({ message: 'Internal server error' });
-    }
-    try {
-        newUser.save()
-        res.send('User Registered successfully')
-    } catch (error) {
-        return res.status(400).json({ message: error });
     }
 
 });
