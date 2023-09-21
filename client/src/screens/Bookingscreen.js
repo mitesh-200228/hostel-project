@@ -27,12 +27,10 @@ function Bookingscreen({ match }) {
         try {
             setloading(true);
             const data = await (await axios.post("/api/rooms/getroombyid", { roomid })).data;
-            console.log(data);
             setroom(data);
             setloading(false);
             settotalAmount(data.rentperday * totalDays)
         } catch (error) {
-            console.log(error);
             setloading(false);
         }
     }, [])
@@ -40,7 +38,6 @@ function Bookingscreen({ match }) {
 
     async function tokenHander(token) {
 
-        console.log(token);
         const bookingDetails = {
 
             token,
@@ -62,14 +59,12 @@ function Bookingscreen({ match }) {
                 window.location.href = '/profile'
             })
         } catch (error) {
-            console.log(error);
             setloading(false)
             Swal.fire('Oops', 'Something went wrong , please try later', 'error')
         }
 
     }
     const isLoggedin = JSON.parse(localStorage.getItem('currentUser'));
-    // console.log(isLoggedin);
     return (
         <div className='m-5'>
 

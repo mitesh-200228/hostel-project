@@ -65,7 +65,6 @@ function Homescreen() {
     try {
       setloading(true);
       const rooms = await (await axios.get("/api/rooms/getallrooms")).data;
-      console.log(rooms);
       sethotels(rooms);
       setduplicatehotes(rooms)
       setloading(false);
@@ -83,7 +82,6 @@ function Homescreen() {
   function filterByType(e) {
     settype(e)
     console.log(e);
-    console.log(duplicatehotes);
     if (e !== 'both') {
       const dupdate = duplicatehotes.filter(room => room.type.toLowerCase() === (e))
       sethotels(dupdate)
@@ -96,7 +94,6 @@ function Homescreen() {
   function filterByFood(e) {
     bsettype(e);
     console.log(e);
-    console.log(duplicatehotes);
     if (e !== 'bldinner') {
       const dupdate = duplicatehotes.filter(room => room.foods.toLowerCase() === (e))
       sethotels(dupdate)
@@ -112,11 +109,11 @@ function Homescreen() {
 
   function filterByValue(e) {
     setValue(e)
-    console.log(e);
+    // console.log(e);
     let x = duplicatehotes
-    const dupdate = x.sort(room => room.rentperday)
+    const dupdate = x.sort((p1, p2) => (p1.rentperday < p2.rentperday) ? 1 : (p1.rentperday > p2.rentperday) ? -1 : 0);
     if (e === 'ASC') { 
-      const decRoom = dupdate.reverse()
+      const decRoom = dupdate
       sethotels(decRoom)
     }
     else if (e === 'DEC') {
@@ -176,8 +173,8 @@ function Homescreen() {
           </div>
           <div className="col-md-4">
             <select className="form-control m-2" value={value} onChange={(e) => { filterByValue(e.target.value) }} >
-              <option value="ASC">Ascending</option>
-              <option value="DEC">Decending</option>
+              <option value="ASC">Decending</option>
+              <option value="DEC">Ascending</option>
             </select>
           </div>
         </div>

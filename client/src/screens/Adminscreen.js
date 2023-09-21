@@ -10,37 +10,45 @@ import { Tag, Divider } from "antd";
 const { TabPane } = Tabs;
 // const user = JSON.parse(localStorage.getItem("currentUser"));
 const your_email = JSON.parse(localStorage.getItem("currentUser")) ? JSON.parse(localStorage.getItem("currentUser")).email : null;
+const isAdmin = JSON.parse(localStorage.getItem("currentUser")) ? JSON.parse(localStorage.getItem("currentUser")).isAdmin : null;
+
 function Adminscreen() {
     return (
-        <div className="ml-3">
-            <h2 className="text-center m-2" style={{ fontSize: "35px" }}>Admin Panel</h2>
-            <Tabs defaultActiveKey="1">
-                <TabPane tab="Bookings" key="1">
-                    <div className="row">
-                        <Bookings />
-                    </div>
-                </TabPane>
-                <TabPane tab="Rooms" key="2">
+        <>
+            {isAdmin ? <>
+                <div className="ml-3">
+                    <h2 className="text-center m-2" style={{ fontSize: "35px" }}>Admin Panel</h2>
+                    <Tabs defaultActiveKey="1">
+                        <TabPane tab="Bookings" key="1">
+                            <div className="row">
+                                <Bookings />
+                            </div>
+                        </TabPane>
+                        <TabPane tab="Rooms" key="2">
 
-                    <div className="row">
-                        <Room />
-                    </div>
+                            <div className="row">
+                                <Room />
+                            </div>
 
-                </TabPane>
-                <TabPane tab="Add Room" key="3">
-
-
-                    <Addroom />
+                        </TabPane>
+                        <TabPane tab="Add Room" key="3">
 
 
-                </TabPane>
-                {/* <TabPane tab="Users" key="4">
+                            <Addroom />
+
+
+                        </TabPane>
+                        {/* <TabPane tab="Users" key="4">
 
           <Users />
 
         </TabPane> */}
-            </Tabs>
-        </div>
+                    </Tabs>
+                </div>
+            </> : <>
+                <h1>You are not Admin, please log in as a admin</h1>
+            </>}
+        </>
     );
 }
 
@@ -113,7 +121,6 @@ export function Room() {
             const data = await (
                 await axios.get("/api/rooms/getallrooms")
             ).data;
-            console.log(data);
             const ddata = data.filter(room => room.your_email === your_email);
             setrooms(ddata);
             setloading(false);
@@ -222,7 +229,6 @@ export function Addroom() {
     const [type, settype] = useState("");
     //   const [your_email, setYourEmail] = useState("");
     const your_email = JSON.parse(localStorage.getItem('currentUser')).email;
-    console.log(your_email);
     // console.log(localStorage.getItem('currentUser'));
     const [breakfast, setbreakfast] = React.useState(false);
     const [lunch, setlunch] = React.useState(false);
@@ -247,8 +253,6 @@ export function Addroom() {
         }
         try {
             const result = await axios.post('/api/rooms/addroom', roomobj);
-            console.log(result);
-            console.log(result.status)
             if (result.status === 200) {
                 window.alert("Room added successfully");
             }
