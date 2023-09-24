@@ -65,6 +65,7 @@ function Homescreen() {
     try {
       setloading(true);
       const rooms = await (await axios.get("/api/rooms/getallrooms")).data;
+      console.log(rooms);
       sethotels(rooms);
       setduplicatehotes(rooms)
       setloading(false);
@@ -82,6 +83,7 @@ function Homescreen() {
   function filterByType(e) {
     settype(e)
     console.log(e);
+    console.log(duplicatehotes);
     if (e !== 'both') {
       const dupdate = duplicatehotes.filter(room => room.type.toLowerCase() === (e))
       sethotels(dupdate)
@@ -94,6 +96,7 @@ function Homescreen() {
   function filterByFood(e) {
     bsettype(e);
     console.log(e);
+    console.log(duplicatehotes);
     if (e !== 'bldinner') {
       const dupdate = duplicatehotes.filter(room => room.foods.toLowerCase() === (e))
       sethotels(dupdate)
@@ -111,7 +114,9 @@ function Homescreen() {
     setValue(e)
     // console.log(e);
     let x = duplicatehotes
+    console.log(x);
     const dupdate = x.sort((p1, p2) => (p1.rentperday < p2.rentperday) ? 1 : (p1.rentperday > p2.rentperday) ? -1 : 0);
+    console.log(dupdate);
     if (e === 'ASC') { 
       const decRoom = dupdate
       sethotels(decRoom)

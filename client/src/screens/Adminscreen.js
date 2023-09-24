@@ -121,6 +121,7 @@ export function Room() {
             const data = await (
                 await axios.get("/api/rooms/getallrooms")
             ).data;
+            console.log(data);
             const ddata = data.filter(room => room.your_email === your_email);
             setrooms(ddata);
             setloading(false);
@@ -229,6 +230,7 @@ export function Addroom() {
     const [type, settype] = useState("");
     //   const [your_email, setYourEmail] = useState("");
     const your_email = JSON.parse(localStorage.getItem('currentUser')).email;
+    console.log(your_email);
     // console.log(localStorage.getItem('currentUser'));
     const [breakfast, setbreakfast] = React.useState(false);
     const [lunch, setlunch] = React.useState(false);
@@ -253,6 +255,8 @@ export function Addroom() {
         }
         try {
             const result = await axios.post('/api/rooms/addroom', roomobj);
+            console.log(result);
+            console.log(result.status)
             if (result.status === 200) {
                 window.alert("Room added successfully");
             }

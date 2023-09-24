@@ -76,6 +76,7 @@ export const MyOrders = () => {
         window.location.href = '/profile'
       })
     } catch (error) {
+      console.log(error);
       Swal.fire('Oops', 'Something went wrong', 'error').then(result => {
         window.location.href = '/profile'
       })
