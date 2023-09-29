@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState, useEffect } from "react";
 import { Modal, Carousel } from "react-bootstrap";
@@ -10,6 +11,7 @@ function Room({ room, fromdate, todate }) {
   const id = room._id;
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  
   const wishlistFunction = async (e) => {
     const userid = JSON.parse(localStorage.getItem('currentUser'));
     try {
@@ -22,6 +24,17 @@ function Room({ room, fromdate, todate }) {
       console.log(error);
     }
   }
+
+  // React.useEffect(async(e) => {
+  //   try {
+  //     const datas = await axios.get('/api/bookings/getallbookings');
+
+  //   } catch (error) {
+  //     // window.alert("Some error occurred");
+  //     console.log(error);
+  //   }
+  // },[])
+
   return (
     <div className="row m-3 p-3 bs">
       <div className="col-md-4">

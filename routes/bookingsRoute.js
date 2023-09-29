@@ -10,7 +10,6 @@ const Booking = require("../models/booking");
 const Room = require("../models/room");
 router.post("/bookroom", async (req, res) => {
   const { room, fromdate, todate, totalDays, totalAmount, user, token } = req.body;
-  console.log(room);
   const YOUR_DOMAIN = 'http://localhost:5000';
   try {
     // res.redirect(303, session.url);
@@ -40,7 +39,9 @@ router.post("/bookroom", async (req, res) => {
         });
         await oldroom.save();
       });
-
+      const data = await Room.findOne({ _id: room._id });
+      // console.log(data.maxcount, data._id);
+      await Room.findOneAndUpdate({ _id: (room._id) }, {maxcount: parseInt(data.maxcount) - 1} );
       res.send("Room Booked Successfully");
     } catch (error) {
       console.log(error);
