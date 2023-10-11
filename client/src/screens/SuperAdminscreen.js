@@ -1,47 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Tabs } from "antd";
 import axios from "axios";
-import Swal from "sweetalert2";
 import Error from "../components/Error";
 import Loader from "../components/Loader";
-import Success from "../components/Success";
-import { Tag, Divider } from "antd";
-
-
 
 const { TabPane } = Tabs;
-const user = JSON.parse(localStorage.getItem("currentUser"));
+// const user = JSON.parse(localStorage.getItem("currentUser"));
 function Adminscreen() {
+  const value = window.prompt("Please Enter Your superadmin email","superadmin@gmail.com");
   return (
-    <div className="ml-3">
-      <h2 className="text-center m-2" style={{ fontSize: "35px" }}>Admin Panel</h2>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Bookings" key="1">
-          <div className="row">
-            <Bookings />
-          </div>
-        </TabPane>
-        <TabPane tab="Rooms" key="2">
+    <>
+      {value === 'superadmin@gmail.com' ? <>
+        <div className="ml-3">
+          <h2 className="text-center m-2" style={{ fontSize: "35px" }}>Admin Panel</h2>
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="Bookings" key="1">
+              <div className="row">
+                <Bookings />
+              </div>
+            </TabPane>
+            <TabPane tab="Rooms" key="2">
 
-          <div className="row">
-            <Rooms />
-          </div>
+              <div className="row">
+                <Rooms />
+              </div>
 
-        </TabPane>
-        {/* <TabPane tab="Add Room" key="3">
+            </TabPane>
+            <TabPane tab="Users" key="4">
 
+              <Users />
 
-          <Addroom />
-
-
-        </TabPane> */}
-        <TabPane tab="Users" key="4">
-
-          <Users />
-
-        </TabPane>
-      </Tabs>
-    </div>
+            </TabPane>
+          </Tabs>
+        </div>
+      </> : <>
+        <h1>Enter Correct Address, Refresh the page for re-enter.</h1>
+      </>}
+    </>
   );
 }
 
@@ -51,7 +46,7 @@ export function Bookings() {
   const [bookings, setbookings] = useState([]);
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState(false);
-  const [success, setsuccess] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     try {
       setloading(true);
@@ -229,7 +224,7 @@ export function Addroom() {
     try {
       const result = await axios.post('/api/rooms/addroom', roomobj);
       console.log(result.status)
-      if(result.status === 200){
+      if (result.status === 200) {
         window.alert("Room added successfully");
       }
       setroom("");

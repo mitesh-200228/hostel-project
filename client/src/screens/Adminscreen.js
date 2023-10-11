@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Tabs } from "antd";
 import axios from "axios";
-import Swal from "sweetalert2";
 import Error from "../components/Error";
 import Loader from "../components/Loader";
-import Success from "../components/Success";
-import { Tag, Divider } from "antd";
 
 const { TabPane } = Tabs;
 // const user = JSON.parse(localStorage.getItem("currentUser"));
@@ -58,7 +55,6 @@ export function Bookings() {
     const [bookings, setbookings] = useState([]);
     const [loading, setloading] = useState(false);
     const [error, seterror] = useState(false);
-    const [success, setsuccess] = useState(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
         try {
@@ -66,7 +62,8 @@ export function Bookings() {
             const data = await (
                 await axios.get("/api/bookings/getallbookings")
             ).data;
-            setbookings(data);
+            var dataFiltered = data.filter(room => room.your_email === your_email);
+            setbookings(dataFiltered);
             setloading(false);
         } catch (error) {
             setloading(false);
@@ -113,7 +110,6 @@ export function Room() {
     const [rooms, setrooms] = useState([]);
     const [loading, setloading] = useState(false);
     const [error, seterror] = useState(false);
-    const [success, setsuccess] = useState(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
         try {
@@ -144,6 +140,7 @@ export function Room() {
                             <th>Rent Per day</th>
                             <th>Max Count</th>
                             <th>Phone Number</th>
+                            <th>Want to Remove?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,11 +152,22 @@ export function Room() {
                                 <td>{room.rentperday}</td>
                                 <td>{room.maxcount}</td>
                                 <td>{room.phonenumber}</td>
+                                <button onClick={async(e) => {
+                                    // console.log(room._id);
+                                    await axios.post('/api/rooms/deleteroom',{roomid: room._id}).then((data) => {
+                                        if(data.status === 200){
+                                            window.alert("Room Deleted");
+                                        }else{
+                                            window.alert("Something Unusual happened");
+                                        }
+                                    }).catch(err => {
+                                        window.alert("Error happened, try again later!");
+                                    });
+                                }}>Remove</button>
                             </tr>
                         })}
                     </tbody>
                 </table>
-
             </div>)}
         </div>
     )

@@ -44,7 +44,6 @@ router.post("/bookroom", async (req, res) => {
       await Room.findOneAndUpdate({ _id: (room._id) }, {maxcount: parseInt(data.maxcount) - 1} );
       res.send("Room Booked Successfully");
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ message: error });
     }
 
@@ -52,28 +51,24 @@ router.post("/bookroom", async (req, res) => {
     return res.status(400).json({ message: "Something went wrong" + error });
   }
 
-
 });
 
 router.post("/cancelbooking", async (req, res) => {
   const { bookingid, roomid } = req.body;
 
-
   try {
-
     const bookingitem = await Booking.findOne({ _id: bookingid })
     bookingitem.status = 'cancelled'
     await bookingitem.save();
-    const room = await Room.findOne({ _id: roomid })
+    const room = await Room.findOne({ _id: roomid });
+    await Room.findByIdAndUpdate({ _id: roomid},{$inc:{maxcount: 1}});
     const bookings = room.currentbookings
     const temp = bookings.filter(booking => booking.bookingid.toString() !== bookingid)
-    console.log(temp);
     room.currentbookings = temp;
-    await room.save()
-
+    await room.save();
+    
     res.send('Booking deleted successfully')
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ message: "something went wrong" });
   }
 });

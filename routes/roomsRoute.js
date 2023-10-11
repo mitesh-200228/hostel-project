@@ -56,10 +56,18 @@ router.post("/addroom", async (req, res) => {
           await newroom.save()
           return res.status(200).send('New Room Added Successfully')
      } catch (error) {
-          console.log(error);
           return res.status(400).json({ error });
      }
 });
 
+router.post("/deleteroom", async (req, res) => {
+     const {roomid} = req.body;
+     try {
+          await Room.findOneAndDelete({_id:roomid});
+          return res.status(200).json({message: 'Room Deleted'});
+     } catch (error) {
+          return res.status(500).json({ error });
+     }
+});
 
 module.exports = router
