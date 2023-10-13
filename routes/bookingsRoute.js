@@ -14,6 +14,14 @@ router.post("/bookroom", async (req, res) => {
   try {
     // res.redirect(303, session.url);
     // if (payment) {
+    let owneremail = "";
+    try {
+      const data = await Room.findOne({ _id: room._id });
+      owneremail = data.your_email;
+    } catch (error) {
+      return res.status(500).json({ message: error });
+
+    }
     try {
       const newbooking = new Booking({
         userid: user._id,
@@ -24,7 +32,8 @@ router.post("/bookroom", async (req, res) => {
         todate: moment(todate).format("DD-MM-YYYY"),
         totalAmount: totalAmount,
         transactionId: "1234",
-        status: 'booked'
+        status: 'booked',
+        roomownerid: owneremail
       });
 
       await newbooking.save(async (err, booking) => {
@@ -41,7 +50,7 @@ router.post("/bookroom", async (req, res) => {
       });
       const data = await Room.findOne({ _id: room._id });
       // console.log(data.maxcount, data._id);
-      await Room.findOneAndUpdate({ _id: (room._id) }, {maxcount: parseInt(data.maxcount) - 1} );
+      await Room.findOneAndUpdate({ _id: (room._id) }, { maxcount: parseInt(data.maxcount) - 1 });
       res.send("Room Booked Successfully");
     } catch (error) {
       return res.status(400).json({ message: error });
@@ -61,12 +70,12 @@ router.post("/cancelbooking", async (req, res) => {
     bookingitem.status = 'cancelled'
     await bookingitem.save();
     const room = await Room.findOne({ _id: roomid });
-    await Room.findByIdAndUpdate({ _id: roomid},{$inc:{maxcount: 1}});
+    await Room.findByIdAndUpdate({ _id: roomid }, { $inc: { maxcount: 1 } });
     const bookings = room.currentbookings
     const temp = bookings.filter(booking => booking.bookingid.toString() !== bookingid)
     room.currentbookings = temp;
     await room.save();
-    
+
     res.send('Booking deleted successfully')
   } catch (error) {
     return res.status(400).json({ message: "something went wrong" });

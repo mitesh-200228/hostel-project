@@ -8,7 +8,10 @@ import Success from "../components/Success";
 import { Tag, Divider } from 'antd';
 const { TabPane } = Tabs;
 
-const user = JSON.parse(localStorage.getItem('currentUser'))
+const user = JSON.parse(localStorage.getItem('currentUser'));
+const isAdmin = JSON.parse(localStorage.getItem("currentUser")) ? JSON.parse(localStorage.getItem("currentUser")).isAdmin : null;
+const your_email = JSON.parse(localStorage.getItem("currentUser")) ? JSON.parse(localStorage.getItem("currentUser")).email : null;
+
 function Profilescreen() {
   return (
     <div className="mt-5 ml-3">
@@ -84,34 +87,81 @@ export const MyOrders = () => {
     }
 
   }
-
+  const [bookings, setbookings] = useState([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
+      try {
+          setloading(true);
+          const data = await (
+              await axios.get("/api/bookings/getallbookings")
+          ).data;
+          var dataFiltered = data.filter(room1 => room1.roomownerid === your_email);
+          setbookings(dataFiltered);
+          setloading(false);
+      } catch (error) {
+          setloading(false);
+          seterror(true);
+      }
+  }, []);
   return (
-    <div>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Error />
-      ) : (
-        mybookings.map(booking => {
-          return <div className="row">
-            <div className="col-md-6 my-auto">
-              <div className='bs m-1 p-2'>
-                <h1>{booking.room}</h1>
-                <p>BookingId : {booking._id}</p>
-                <p>TransactionId : {booking.transactionId}</p>
-                <p><b>Check In : </b>{booking.fromdate}</p>
-                <p><b>Check Out : </b>{booking.todate}</p>
-                <p><b>Amount : </b> {booking.totalAmount}</p>
-                <p><b>Status</b> : {booking.status == 'booked' ? (<Tag color="green">Confirmed</Tag>) : (<Tag color="red">Cancelled</Tag>)}</p>
-                <div className='text-right'>
-                  {booking.status == 'booked' && (<button className='btn btn-primary' onClick={() => cancelBooking(booking._id, booking.roomid)}>Cancel Booking</button>)}
+    <>
+      {isAdmin ? <div className='col-md-11'>
+        <h1>Bookings</h1>
+        {loading ? (<Loader />) : error ? (<Error />) : (<div>
+
+          <table className='table table-bordered table-dark'>
+            <thead className='bs'>
+              <tr>
+                <th>Booking Id</th>
+                <th>Userid</th>
+                <th>Room</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings.map(booking => {
+                return <tr>
+                  <td>{booking._id}</td>
+                  <td>{booking.userid}</td>
+                  <td>{booking.room}</td>
+                  <td>{booking.fromdate}</td>
+                  <td>{booking.todate}</td>
+                  <td>{booking.status}</td>
+                </tr>
+              })}
+            </tbody>
+          </table>
+
+        </div>)}
+      </div> : <div>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Error />
+        ) : (
+          mybookings.map(booking => {
+            return <div className="row">
+              <div className="col-md-6 my-auto">
+                <div className='bs m-1 p-2'>
+                  <h1>{booking.room}</h1>
+                  <p>BookingId : {booking._id}</p>
+                  <p>TransactionId : {booking.transactionId}</p>
+                  <p><b>Check In : </b>{booking.fromdate}</p>
+                  <p><b>Check Out : </b>{booking.todate}</p>
+                  <p><b>Amount : </b> {booking.totalAmount}</p>
+                  <p><b>Status</b> : {booking.status == 'booked' ? (<Tag color="green">Confirmed</Tag>) : (<Tag color="red">Cancelled</Tag>)}</p>
+                  <div className='text-right'>
+                    {booking.status == 'booked' && (<button className='btn btn-primary' onClick={() => cancelBooking(booking._id, booking.roomid)}>Cancel Booking</button>)}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        })
-      )}
-    </div>
+          })
+        )}
+      </div>}
+    </>
   );
 };
 

@@ -35,11 +35,6 @@ function Adminscreen() {
 
 
                         </TabPane>
-                        {/* <TabPane tab="Users" key="4">
-
-          <Users />
-
-        </TabPane> */}
                     </Tabs>
                 </div>
             </> : <>
@@ -62,7 +57,7 @@ export function Bookings() {
             const data = await (
                 await axios.get("/api/bookings/getallbookings")
             ).data;
-            var dataFiltered = data.filter(room => room.your_email === your_email);
+            var dataFiltered = data.filter(room1 => room1.roomownerid === your_email);
             setbookings(dataFiltered);
             setloading(false);
         } catch (error) {
@@ -107,6 +102,7 @@ export function Bookings() {
 
 
 export function Room() {
+    let bookings = [];
     const [rooms, setrooms] = useState([]);
     const [loading, setloading] = useState(false);
     const [error, seterror] = useState(false);
@@ -117,8 +113,8 @@ export function Room() {
             const data = await (
                 await axios.get("/api/rooms/getallrooms")
             ).data;
-            console.log(data);
             const ddata = data.filter(room => room.your_email === your_email);
+            bookings = ddata;
             setrooms(ddata);
             setloading(false);
         } catch (error) {
@@ -152,12 +148,12 @@ export function Room() {
                                 <td>{room.rentperday}</td>
                                 <td>{room.maxcount}</td>
                                 <td>{room.phonenumber}</td>
-                                <button onClick={async(e) => {
+                                <button onClick={async (e) => {
                                     // console.log(room._id);
-                                    await axios.post('/api/rooms/deleteroom',{roomid: room._id}).then((data) => {
-                                        if(data.status === 200){
+                                    await axios.post('/api/rooms/deleteroom', { roomid: room._id }).then((data) => {
+                                        if (data.status === 200) {
                                             window.alert("Room Deleted");
-                                        }else{
+                                        } else {
                                             window.alert("Something Unusual happened");
                                         }
                                     }).catch(err => {

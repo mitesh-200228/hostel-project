@@ -10,7 +10,7 @@ const bookingSchema = mongoose.Schema({
     totalAmount:{type:Number, required:true},
     transactionId:{type:String, required:true},
     status:{type:String, required:true , default:'booked'},
-
+    roomownerid:{type:String, required:true}
 },{
     timestamps:true,
 }) 
